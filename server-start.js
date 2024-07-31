@@ -1,16 +1,16 @@
-const http = require('http');
-const BookstoreServerController = require('./BookstoreServerController');
-const connectToDatabase =require('./DBCommunicator');
-const BookDBManager=require('./BookDBManager');
-const {Db} = require("mongodb");
+const connectToDatabase =require('./database-connection');
+const express=require('express');
+const booksRouter=require('./routers/book.router');
+const usersRouter=require('./routers/user.router');
 require('dotenv').config();
-var bookList=[];
-const mongoose = connectToDatabase();
-const server = http.createServer((req, res) => {
-    const controller = new BookstoreServerController();
-    controller.createBookstoreServerController(req, res, bookList);
+
+app=express();
+connectToDatabase();
+app.use(express.json());
+app.use("/books",booksRouter)
+app.use("/users",usersRouter)
+app.listen(process.env.PORT,process.env.IP, () => {
+    console.log(`Server is running on http://${process.env.IP}:${process.env.PORT}`);
+
 });
 
-server.listen(parseInt(process.env.PORT), process.env.IP, () => {
-    console.log(`Server running at http://${process.env.IP}:${process.env.PORT}/`);
-});
