@@ -12,6 +12,14 @@ class UserController {
             res.status(500).json("Internal Server Error");
         }
     }
+    async CheckCredentials(req, res) {
+        try {
+            const userExists = await userService.CheckCredentials({username: req.params.username, password: req.params.password});
+            res.status(200).json(userExists);
+        } catch (err) {
+            res.status(500).json("Internal Server Error");
+        }
+    }
 
     async getUsers(req, res) {
         try {

@@ -1,9 +1,10 @@
 const {validateQuery} = require("./query-validator");
-function createFilter(req,type) {
+function createFilter(req,type,strict) {
     const filters = {};
     let sortOrder="asc";
     let sortBy="name";
     let limit=10;
+    let page=1;
     for (let key in req.query) {
         if (req.query.hasOwnProperty(key)) {
             if(!validateQuery(key,req.query[key],type))
@@ -29,12 +30,21 @@ function createFilter(req,type) {
                 limit=parseInt(req.query[key]);
                 continue;
             }
-            filters[key]=req.query[key];
+            if(key==="page")
+            {
+                page=parseInt(req.query[key]);
+                continue;
+            }
+            if(!strict)
+                filters[key]={ "$regex": req.query[key], "$options": "i" };
+            else
+                filters[key]=req.query[key];
+
 
         }
     }
     console.log(filters);
-    return {filters,sortBy,sortOrder,limit,ok:true};
+    return {filters,sortBy,sortOrder,limit,page,ok:true};
 }
 
 module.exports = {createFilter};

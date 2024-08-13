@@ -36,13 +36,39 @@ const deleteBook = async (id) => {
         console.log("Error")
     }
 }
-const getBookByFilters=async(filters,sortBy,sortOrder,limit) =>
+const getBookByFilters=async(filters,sortBy,sortOrder,limit,page) =>
 {
     try{
-        return await Book.find(filters).sort({ [sortBy]: sortOrder }).limit(limit);
+        console.log((page-1)*limit)
+        console.log(limit)
+        return {book:await Book.find(filters).sort({ [sortBy]: sortOrder }).limit(limit).skip((page-1)*limit),
+                bookNumber:await Book.countDocuments(filters).exec()};
     }
     catch (e) {
 
     }
 }
-module.exports = {getBooks, getBooksByName, createBook, updateBook, deleteBook,getBookByFilters};
+const getFilters=async()=>
+{
+    try{
+        return  {authors:await Book.aggregate([
+            {
+                $group: {
+                    _id: '$author',
+                    count: { $sum: 1 } // this means that the count will increment by 1
+                }
+            }
+        ]), genres:await Book.aggregate([
+                {
+                    $group: {
+                        _id: '$genre',
+                        count: { $sum: 1 } // this means that the count will increment by 1
+                    }
+                }
+            ]) }
+    }
+    catch (e) {
+
+    }
+}
+module.exports = {getBooks, getBooksByName, createBook, updateBook, deleteBook,getBookByFilters,getFilters};

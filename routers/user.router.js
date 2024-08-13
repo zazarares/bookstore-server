@@ -8,6 +8,7 @@ router.use(setupCORS.setupCORS);
 
 router.get('/', controller.getUsers);
 router.get('/filter',controller.filterUsers);
+router.get('/check/:username/:password',controller.CheckCredentials);
 router.get('/:name', controller.getUserByUsername);
 router.post('/', controller.createUser);
 router.put('/:id', controller.updateUser);

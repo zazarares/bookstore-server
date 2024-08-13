@@ -8,6 +8,7 @@ router.use(setupCORS.setupCORS);
 
 router.get('/', controller.getBooks);
 router.get('/filter',controller.filterBooks);
+router.get('/filters',controller.getFilters);
 router.get('/:name', controller.getBooksByName);
 router.post('/', controller.createBook);
 router.put('/:id', controller.updateBook);

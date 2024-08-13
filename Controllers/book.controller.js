@@ -4,7 +4,15 @@ class BookController {
     constructor() {
 
     }
-
+    async getFilters(req,res)
+    {
+        try {
+            const bookList = await bookService.getFilters();
+            res.status(200).json(bookList);
+        } catch (err) {
+            res.status(500).json("Internal Server Error");
+        }
+    }
     async getBooksByName(req, res) {
         try {
             const bookList = await bookService.getBooksByName({name: req.params.name});
@@ -25,12 +33,14 @@ class BookController {
 
     async createBook(req, res) {
         try {
+
             const book = {
                 name: req.body.name,
                 author: req.body.author,
                 year: req.body.year,
                 genre: req.body.genre,
                 price: req.body.price,
+                url: req.body.url
             };
             await bookService.createBook(book);
             res.status(201).json({message: "Book Created Successfully\nBook: ", book: book});
@@ -47,6 +57,7 @@ class BookController {
                 year: req.body.year,
                 genre: req.body.genre,
                 price: req.body.price,
+                url: req.body.url,
             });
             res.status(200).json({
                 message: `Book with id ${req.params.id} was updated successfully`, book: {
@@ -55,6 +66,8 @@ class BookController {
                     year: req.body.year,
                     genre: req.body.genre,
                     price: req.body.price,
+                    url: req.body.url,
+
                 }
             });
         } catch (err) {
@@ -73,7 +86,7 @@ class BookController {
 
     async filterBooks(req, res) {
         {
-            const {filters,sortBy,sortOrder,limit,ok}=createFilter.createFilter(req,"book");
+            const {filters,sortBy,sortOrder,limit,page,ok}=createFilter.createFilter(req,"book",true);
             if(!ok)
             {
                 res.status(500).json("invalid parameters");
@@ -82,7 +95,7 @@ class BookController {
 
             //console.log(f);
             try {
-                const filteredBooks = (await bookService.getBookByFilters(filters,sortBy,sortOrder,limit));
+                const filteredBooks = (await bookService.getBookByFilters(filters,sortBy,sortOrder,limit,page));
                 res.status(200).json(filteredBooks);
             } catch (err) {
                 res.status(500).json(`Could not delete book with id ${req.params.id}`);
