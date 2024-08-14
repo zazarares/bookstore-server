@@ -40,7 +40,8 @@ class BookController {
                 year: req.body.year,
                 genre: req.body.genre,
                 price: req.body.price,
-                url: req.body.url
+                url: req.body.url,
+                quantity:req.body.quantity
             };
             await bookService.createBook(book);
             res.status(201).json({message: "Book Created Successfully\nBook: ", book: book});
@@ -58,6 +59,7 @@ class BookController {
                 genre: req.body.genre,
                 price: req.body.price,
                 url: req.body.url,
+                quantity:req.body.quantity
             });
             res.status(200).json({
                 message: `Book with id ${req.params.id} was updated successfully`, book: {
@@ -67,7 +69,7 @@ class BookController {
                     genre: req.body.genre,
                     price: req.body.price,
                     url: req.body.url,
-
+                    quantity:req.body.quantity
                 }
             });
         } catch (err) {
@@ -102,7 +104,18 @@ class BookController {
             }
         }
     }
-
+    async updateQuantities(req,res){
+        try {
+            const bookList=req.body.bookList;
+            console.log(bookList);
+            for(let i=0;i<bookList.length;i++){
+                await bookService.updateQuantities(bookList[i]._id,bookList[i].quantity);
+            }
+            res.status(200);
+        } catch (err) {
+            res.status(500).json(`Could not delete book with id ${req.params.id}`);
+        }
+    }
     errorNotFound(req, res) {
         res.status(404).json({message: 'Not Found'});
     }

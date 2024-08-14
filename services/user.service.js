@@ -18,8 +18,8 @@ const CheckCredentials = async (filter = {}) => {
     try {
         console.log(filter);
         const user=await User.find(filter);
-        if(user.length)
-            return user[0]._id;
+        if(user.length===1)
+            return user[0];
         return null;
     } catch (err) {
         console.error('Error retrieving Books:', err);
@@ -29,7 +29,8 @@ const CheckCredentials = async (filter = {}) => {
 const createUser = async (user) => {
     try {
         const savedUser=new User(user);
-        savedUser.save();
+        return savedUser.save().then((r)=>{console.log(r);return r});
+
     } catch (err) {
         console.error('Error retrieving Users:', err);
     }

@@ -12,6 +12,14 @@ class OrderController {
             res.status(500).json("Internal Server Error");
         }
     }
+    async getOrdersByUserID(req, res) {
+        try {
+            const orderList = await orderService.getOrdersByUserId(req.params.id);
+            res.status(200).json(orderList);
+        } catch (err) {
+            res.status(500).json("Internal Server Error");
+        }
+    }
 
     async createOrder(req, res) {
         const { userId, books } = req.body;

@@ -43,7 +43,7 @@ function createFilter(req,type,strict) {
 
         }
     }
-    console.log(filters);
+    console.log(filters,limit,page);
     return {filters,sortBy,sortOrder,limit,page,ok:true};
 }
 

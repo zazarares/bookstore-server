@@ -28,4 +28,11 @@ const deleteOrder = async (id) => {
         console.log("Error")
     }
 }
-module.exports = {getOrders, createOrder, updateOrder, deleteOrder};
+const getOrdersByUserId = async (id) => {
+    try {
+        return await Order.find({userId:id});
+    } catch (err) {
+        console.log("Error")
+    }
+}
+module.exports = {getOrders, createOrder, updateOrder, deleteOrder,getOrdersByUserId};

@@ -71,4 +71,9 @@ const getFilters=async()=>
 
     }
 }
-module.exports = {getBooks, getBooksByName, createBook, updateBook, deleteBook,getBookByFilters,getFilters};
+const updateQuantities=async(id,quantity)=>
+{
+    const book= await Book.findById(id);
+    await Book.findByIdAndUpdate(id,{quantity:book.quantity-quantity},{new:true});
+}
+module.exports = {getBooks, getBooksByName, createBook, updateBook, deleteBook,getBookByFilters,getFilters,updateQuantities};

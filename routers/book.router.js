@@ -11,6 +11,7 @@ router.get('/filter',controller.filterBooks);
 router.get('/filters',controller.getFilters);
 router.get('/:name', controller.getBooksByName);
 router.post('/', controller.createBook);
+router.put('/updateQuantity',controller.updateQuantities);
 router.put('/:id', controller.updateBook);
 router.delete('/:id', controller.deleteBook);
 

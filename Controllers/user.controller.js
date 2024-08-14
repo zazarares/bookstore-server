@@ -1,5 +1,8 @@
 const userService = require("../services/user.service");
 const createFilter=require("../utils/create-filter");
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 class UserController {
     constructor() {
     }
@@ -12,14 +15,7 @@ class UserController {
             res.status(500).json("Internal Server Error");
         }
     }
-    async CheckCredentials(req, res) {
-        try {
-            const userExists = await userService.CheckCredentials({username: req.params.username, password: req.params.password});
-            res.status(200).json(userExists);
-        } catch (err) {
-            res.status(500).json("Internal Server Error");
-        }
-    }
+
 
     async getUsers(req, res) {
         try {
@@ -33,15 +29,18 @@ class UserController {
 
     async createUser(req, res) {
         try {
-            const user =  {
+            const sentUser =  {
                 name: req.body.name,
                 username: req.body.username,
                 email: req.body.email,
                 password: req.body.password,
                 isAdmin: req.body.isAdmin,
             };
-            await userService.createUser(user);
-            res.status(201).json({message:"User Created Succesfully", user: user});
+            const user = await userService.createUser(sentUser);
+            const token= jwt.sign({ id: user._id, username: user.username,isAdmin: user.isAdmin }, process.env.SECRET_KEY, {
+                expiresIn: '1h', // Token expiration time
+            });
+            res.status(201).json({token:token, user});
         } catch (e) {
             res.status(500).json("Internal Server Error");
 
