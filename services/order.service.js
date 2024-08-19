@@ -9,7 +9,7 @@ const getOrders = async () => {
 const createOrder = async (order) => {
     try {
         const SavedOrder=new Order(order);
-        SavedOrder.save();
+        return await SavedOrder.save();
     } catch (err) {
         console.error('Error creating Orders:', err);
     }

@@ -1,6 +1,5 @@
 const userService = require("../services/user.service");
 const createFilter=require("../utils/create-filter");
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 class UserController {

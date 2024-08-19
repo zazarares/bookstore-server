@@ -7,7 +7,7 @@ const bookSchema = new mongoose.Schema({
     genre: {type: String, required: true},
     price: {type: Number, required: true},
     url: {type: String, required: true},
-    quantity: {type:Number,required:true}
+    quantity: {type: Number, required: true}
 });
 
 const Book = mongoose.model('Book', bookSchema);

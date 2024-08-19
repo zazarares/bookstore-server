@@ -16,7 +16,6 @@ const getUserByUsername = async (filter = {}) => {
 };
 const CheckCredentials = async (filter = {}) => {
     try {
-        console.log(filter);
         const user=await User.find(filter);
         if(user.length===1)
             return user[0];

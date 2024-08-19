@@ -1,11 +1,12 @@
 const bookService = require("../services/book.service");
-const createFilter=require("../utils/create-filter");
+const createFilter = require("../utils/create-filter");
+
 class BookController {
     constructor() {
 
     }
-    async getFilters(req,res)
-    {
+
+    async getFilters(req, res) {
         try {
             const bookList = await bookService.getFilters();
             res.status(200).json(bookList);
@@ -13,6 +14,7 @@ class BookController {
             res.status(500).json("Internal Server Error");
         }
     }
+
     async getBooksByName(req, res) {
         try {
             const bookList = await bookService.getBooksByName({name: req.params.name});
@@ -41,7 +43,7 @@ class BookController {
                 genre: req.body.genre,
                 price: req.body.price,
                 url: req.body.url,
-                quantity:req.body.quantity
+                quantity: req.body.quantity
             };
             await bookService.createBook(book);
             res.status(201).json({message: "Book Created Successfully\nBook: ", book: book});
@@ -59,7 +61,7 @@ class BookController {
                 genre: req.body.genre,
                 price: req.body.price,
                 url: req.body.url,
-                quantity:req.body.quantity
+                quantity: req.body.quantity
             });
             res.status(200).json({
                 message: `Book with id ${req.params.id} was updated successfully`, book: {
@@ -69,7 +71,7 @@ class BookController {
                     genre: req.body.genre,
                     price: req.body.price,
                     url: req.body.url,
-                    quantity:req.body.quantity
+                    quantity: req.body.quantity
                 }
             });
         } catch (err) {
@@ -88,39 +90,37 @@ class BookController {
 
     async filterBooks(req, res) {
         {
-            const {filters,sortBy,sortOrder,limit,page,ok}=createFilter.createFilter(req,"book",true);
-            if(!ok)
-            {
+            const {filters, sortBy, sortOrder, limit, page, ok} = createFilter.createFilter(req, "book", true);
+            if (!ok) {
                 res.status(500).json("invalid parameters");
                 return;
             }
-
-            //console.log(f);
             try {
-                const filteredBooks = (await bookService.getBookByFilters(filters,sortBy,sortOrder,limit,page));
+                const filteredBooks = (await bookService.getBookByFilters(filters, sortBy, sortOrder, limit, page));
                 res.status(200).json(filteredBooks);
             } catch (err) {
                 res.status(500).json(`Could not delete book with id ${req.params.id}`);
             }
         }
     }
-    async updateQuantities(req,res){
+
+    async updateQuantities(req, res) {
         try {
-            const bookList=req.body.bookList;
+            const bookList = req.body.bookList;
             console.log(bookList);
-            for(let i=0;i<bookList.length;i++){
-                await bookService.updateQuantities(bookList[i]._id,bookList[i].quantity);
+            for (let i = 0; i < bookList.length; i++) {
+                await bookService.updateQuantities(bookList[i]._id, bookList[i].quantity);
             }
             res.status(200);
         } catch (err) {
             res.status(500).json(`Could not delete book with id ${req.params.id}`);
         }
     }
+
     errorNotFound(req, res) {
         res.status(404).json({message: 'Not Found'});
     }
 }
-
 
 
 module.exports = BookController;

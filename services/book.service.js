@@ -8,7 +8,6 @@ const getBooks = async () => {
 };
 const getBooksByName = async (filter = {}) => {
     try {
-        console.log(filter);
         return await Book.find(filter);
     } catch (err) {
         console.error('Error retrieving Books:', err);
@@ -16,7 +15,7 @@ const getBooksByName = async (filter = {}) => {
 };
 const createBook = async (book) => {
     try {
-        const SavedBook=new Book(book);
+        const SavedBook = new Book(book);
         SavedBook.save();
     } catch (err) {
         console.error('Error retrieving Books:', err);
@@ -36,44 +35,67 @@ const deleteBook = async (id) => {
         console.log("Error")
     }
 }
-const getBookByFilters=async(filters,sortBy,sortOrder,limit,page) =>
-{
-    try{
-        console.log((page-1)*limit)
-        console.log(limit)
-        return {book:await Book.find(filters).sort({ [sortBy]: sortOrder }).limit(limit).skip((page-1)*limit),
-                bookNumber:await Book.countDocuments(filters).exec()};
-    }
-    catch (e) {
+const getBookByFilters = async (filters, sortBy, sortOrder, limit, page) => {
+    try {
+        return {
+            book: await Book.find(filters).sort({[sortBy]: sortOrder}).limit(limit).skip((page - 1) * limit),
+            bookNumber: await Book.countDocuments(filters).exec()
+        };
+    } catch (e) {
 
     }
 }
-const getFilters=async()=>
-{
-    try{
-        return  {authors:await Book.aggregate([
-            {
-                $group: {
-                    _id: '$author',
-                    count: { $sum: 1 } // this means that the count will increment by 1
+const getFilters = async () => {
+    try {
+        return {
+            authors: await Book.aggregate([
+                {
+                    $group: {
+                        _id: '$author',
+                        count: {$sum: 1} // this means that the count will increment by 1
+                    }
                 }
-            }
-        ]), genres:await Book.aggregate([
+            ]), genres: await Book.aggregate([
                 {
                     $group: {
                         _id: '$genre',
-                        count: { $sum: 1 } // this means that the count will increment by 1
+                        count: {$sum: 1} // this means that the count will increment by 1
                     }
                 }
-            ]) }
-    }
-    catch (e) {
+            ])
+        }
+    } catch (e) {
 
     }
 }
-const updateQuantities=async(id,quantity)=>
-{
-    const book= await Book.findById(id);
-    await Book.findByIdAndUpdate(id,{quantity:book.quantity-quantity},{new:true});
+const getOrderedBooksByID = async (books) => {
+    try {
+        let totalPrice = 0;
+        for (let item of books) {
+            const book = await Book.findById(item.book); // Find the book by its ID
+            totalPrice += book.price * item.quantity;
+            item["price"] = book.price;
+            item["name"] = book.name;
+        }
+        return {finalBookList: books, totalPrice: totalPrice};
+    } catch (error) {
+
+    }
+};
+const updateQuantities = async (id, quantity) => {
+    const book = await Book.findById(id);
+    await Book.findByIdAndUpdate(id, {quantity: book.quantity - quantity}, {new: true});
 }
-module.exports = {getBooks, getBooksByName, createBook, updateBook, deleteBook,getBookByFilters,getFilters,updateQuantities};
+
+
+module.exports = {
+    getBooks,
+    getBooksByName,
+    createBook,
+    updateBook,
+    deleteBook,
+    getBookByFilters,
+    getFilters,
+    updateQuantities,
+    getOrderedBooksByID
+};

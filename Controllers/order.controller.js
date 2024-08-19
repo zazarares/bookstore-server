@@ -1,5 +1,5 @@
 const orderService = require("../services/order.service");
-const Book = require("../model/Book");
+const bookService=require("../services/book.service");
 class OrderController {
     constructor() {
 
@@ -23,24 +23,16 @@ class OrderController {
 
     async createOrder(req, res) {
         const { userId, books } = req.body;
-        let totalPrice = 0;
-        console.log(books);
-        for (let item of books) {
-            const book = await Book.findById(item.book._id); // Find the book by its ID
-            if (!book) {
-                return res.status(400).json({ message: `Book with ID ${item.book} not found` });
-            }
-            totalPrice += book.price * item.quantity;
-        }
         try {
+            const {finalBookList,totalPrice}=await bookService.getOrderedBooksByID(books)
             const order = {
                 userId: userId,
-                books: books,
+                books: finalBookList,
                 totalPrice: totalPrice,
                 date: Date.now(),
             };
-            await orderService.createOrder(order);
-            res.status(201).json({message: "order Created Successfully\norder: ", order: order});
+            const finalOrder=await orderService.createOrder(order);
+            res.status(201).json({message: "order Created Successfully\norder: ", order: finalOrder});
         } catch (err) {
             res.status(500).json("Internal Server Error");
         }
@@ -49,18 +41,12 @@ class OrderController {
     async updateOrder(req, res) {
         try {
             const { userId, books,date } = req.body;
-            let totalPrice = 0;
 
-            for (let item of books) {
-                const book = await Book.findById(item.book); // Find the book by its ID
-                if (!book) {
-                    return res.status(400).json({ message: `Book with ID ${item.book} not found` });
-                }
-                totalPrice += book.price * item.quantity;
-            }
+            const {finalBookList,totalPrice}=await bookService.getOrderedBooksByID(books)
+
             await orderService.updateOrder(req.params.id, {
                 userId: userId,
-                books: books,
+                books: finalBookList,
                 totalPrice: totalPrice,
                 date: date,
             });
