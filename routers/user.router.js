@@ -1,22 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../Controllers/user.controller');
-const authController=require('../Controllers/auth.controller');
 const setupCORS = require("../utils/setup-cors");
-const controller = new userController();
-const authenticationController=new authController();
+const {CheckCredentials}=require('../Controllers/auth.controller');
 const {authenticateToken} = require('../utils/auth-middleware');
 const {verifyAdminToken} = require("../utils/auth-middleware");
 router.use(setupCORS.setupCORS);
 
-router.get('/',verifyAdminToken, controller.getUsers);
-router.get('/filter',verifyAdminToken,controller.filterUsers);
-router.get('/check/:username/:password',authenticationController.CheckCredentials);
-router.get('/:name',verifyAdminToken, controller.getUserByUsername);
-router.post('/', controller.createUser);
-router.put('/:id',authenticateToken, controller.updateUser);
-router.delete('/:id',authenticateToken, controller.deleteUser);
+router.get('/',verifyAdminToken, userController.getUsers);
+router.get('/filter',verifyAdminToken,userController.filterUsers);
+router.get('/login/:username/:password',CheckCredentials);
+router.get('/:name',verifyAdminToken, userController.getUserByUsername);
+router.post('/', userController.createUser);
+router.put('/:id',authenticateToken, userController.updateUser);
+router.delete('/:id',authenticateToken, userController.deleteUser);
 
-router.use(controller.errorNotFound);
+router.use(userController.errorNotFound);
 
 module.exports = router;

@@ -2,19 +2,18 @@ const express = require('express');
 const router = express.Router();
 const bookController = require('../Controllers/book.controller');
 const setupCORS = require('../utils/setup-cors');
-const controller = new bookController();
 
 router.use(setupCORS.setupCORS);
 
-router.get('/', controller.getBooks);
-router.get('/filter',controller.filterBooks);
-router.get('/filters',controller.getFilters);
-router.get('/:name', controller.getBooksByName);
-router.post('/', controller.createBook);
-router.put('/updateQuantity',controller.updateQuantities);
-router.put('/:id', controller.updateBook);
-router.delete('/:id', controller.deleteBook);
+router.get('/', bookController.getBooks);
+router.get('/filter',bookController.filterBooks);
+router.get('/filters',bookController.getFilters);
+router.get('/:name', bookController.getBooksByName);
+router.post('/', bookController.createBook);
+router.put('/updateQuantity',bookController.updateQuantities);
+router.put('/:id', bookController.updateBook);
+router.delete('/:id', bookController.deleteBook);
 
-router.use(controller.errorNotFound);
+router.use(bookController.errorNotFound);
 
 module.exports = router;

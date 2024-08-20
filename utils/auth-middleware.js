@@ -14,6 +14,12 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
+const generateToken=(user)=>
+{
+    return jwt.sign({ id: user._id, username: user.username,isAdmin: user.isAdmin }, process.env.SECRET_KEY, {
+        expiresIn: '1h', // Token expiration time
+    });
+}
 const verifyAdminToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1]; // Expect "Bearer token"
 
@@ -30,4 +36,4 @@ const verifyAdminToken = (req, res, next) => {
     });
 };
 
-module.exports = {authenticateToken, verifyAdminToken};
+module.exports = {authenticateToken, verifyAdminToken,generateToken};

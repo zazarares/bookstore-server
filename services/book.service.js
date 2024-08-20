@@ -70,22 +70,54 @@ const getFilters = async () => {
 }
 const getOrderedBooksByID = async (books) => {
     try {
+
         let totalPrice = 0;
+        let bookIDs=[];
+        const finalBookList=[];
+
         for (let item of books) {
-            const book = await Book.findById(item.book); // Find the book by its ID
-            totalPrice += book.price * item.quantity;
-            item["price"] = book.price;
-            item["name"] = book.name;
+            bookIDs.push(item.book);
         }
-        return {finalBookList: books, totalPrice: totalPrice};
+        const bookList=await Book.find({
+            "_id":{$in: bookIDs},
+        })
+        for(let book of bookList) {
+            const currBook = await book;
+            const matchedBook = books.find(item => item.book === currBook._id.toString());
+            if (matchedBook) {
+                const bookPrice = currBook.price * matchedBook.quantity;
+                totalPrice += bookPrice;
+
+                finalBookList.push({
+                    book: currBook._id,
+                    price: currBook.price,
+                    quantity: matchedBook.quantity,
+                    name: currBook.name,
+                });
+            }
+        }
+        return {finalBookList: finalBookList, totalPrice: totalPrice};
     } catch (error) {
 
     }
 };
-const updateQuantities = async (id, quantity) => {
-    const book = await Book.findById(id);
-    await Book.findByIdAndUpdate(id, {quantity: book.quantity - quantity}, {new: true});
-}
+const updateQuantities = async (books) => {
+    try {
+        // Prepare an array of update operations
+        const operations = books.map(book => ({
+            updateOne: {
+                filter: { _id: book.book },  // Filter to match the book
+                update: { $inc: { quantity: -book.quantity } },  // Decrease the quantity
+            }
+        }));
+
+        return await Book.bulkWrite(operations);  // Optional: Return the result of the bulkWrite operation
+    } catch (error) {
+        console.error('Error updating book quantities:', error);
+        throw error;  // Optional: Propagate the error if needed
+    }
+};
+
 
 
 module.exports = {

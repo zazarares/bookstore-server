@@ -20,6 +20,16 @@ function createFilter(req,type,strict) {
                 sortBy=req.query[key];
                 continue;
             }
+            if(key==="minPrice" || key==="maxPrice")
+            {
+                filters["price"]={$gte: req.query["minPrice"], $lte: req.query["maxPrice"]};
+                continue;
+            }
+            if(key==="minYear" || key==="maxYear")
+            {
+                filters["year"]={$gte: req.query["minYear"], $lte: req.query["maxYear"]};
+                continue;
+            }
             if(key==="sortOrder")
             {
                 sortOrder=req.query[key];
