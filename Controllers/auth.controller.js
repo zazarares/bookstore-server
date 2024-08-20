@@ -5,7 +5,7 @@ dotenv.config();
     const CheckCredentials=async(req, res)=>
     {
         try {
-            const user = await userService.CheckCredentials({username: req.params.username, password: req.params.password});
+            const user = await userService.CheckCredentials({username: req.body.username, password: req.body.password});
             const token= generateToken(user);
             res.status(200).json({token:token,user:user});
         } catch (err) {

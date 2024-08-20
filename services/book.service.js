@@ -45,23 +45,31 @@ const getBookByFilters = async (filters, sortBy, sortOrder, limit, page) => {
 
     }
 }
-const getFilters = async () => {
+const getFilters = async (filter) => {
     try {
+        const authorFilter = { ...filter };
+        delete authorFilter.author;
+        const genreFilter = { ...filter };
+        delete genreFilter.genre;
         return {
             authors: await Book.aggregate([
+                {$match:authorFilter},
                 {
                     $group: {
                         _id: '$author',
-                        count: {$sum: 1} // this means that the count will increment by 1
+                        count: {$sum: 1}
                     }
-                }
+                },
+                { $sort: { _id: 1 } }
             ]), genres: await Book.aggregate([
+                {$match:genreFilter},
                 {
                     $group: {
                         _id: '$genre',
                         count: {$sum: 1} // this means that the count will increment by 1
                     }
-                }
+                },
+                { $sort: { _id: 1 } } // Sort alphabetically by author
             ])
         }
     } catch (e) {

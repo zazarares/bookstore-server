@@ -4,7 +4,8 @@ const {urlToBook} = require("../utils/url-to-object");
 
 const getFilters = async (req, res) => {
     try {
-        const bookList = await bookService.getFilters();
+        const {filters} = createFilter.createFilter(req, "book", true);
+        const bookList = await bookService.getFilters(filters);
         res.status(200).json(bookList);
     } catch (err) {
         res.status(500).json("Internal Server Error");
@@ -62,7 +63,7 @@ const deleteBook = async (req, res) => {
 
 const filterBooks = async (req, res) => {
     {
-        const {filters, sortBy, sortOrder, limit, page, ok} = createFilter.createFilter(req, "book", true);
+        const {filters, sortBy, sortOrder, limit, page, ok} = createFilter.createFilter(req, "book", false);
         if (!ok) {
             res.status(500).json("invalid parameters");
             return;

@@ -9,7 +9,7 @@ router.use(setupCORS.setupCORS);
 
 router.get('/',verifyAdminToken, userController.getUsers);
 router.get('/filter',verifyAdminToken,userController.filterUsers);
-router.get('/login/:username/:password',CheckCredentials);
+router.post('/login/',CheckCredentials);
 router.get('/:name',verifyAdminToken, userController.getUserByUsername);
 router.post('/', userController.createUser);
 router.put('/:id',authenticateToken, userController.updateUser);
