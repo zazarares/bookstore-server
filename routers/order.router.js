@@ -9,7 +9,7 @@ router.use(setupCORS.setupCORS);
 
 router.get('/',verifyAdminToken, orderController.getOrders);
 router.post('/',authenticateToken,orderController.createOrder);
-router.get('/user/:id',authenticateToken,orderController.getOrdersByUserID);
+router.get('/user',authenticateToken,orderController.getOrdersByUserID);
 router.get('/:id', orderController.getOrderByID);
 router.put('/:id',authenticateToken, orderController.updateOrder);
 router.delete('/:id',authenticateToken, orderController.deleteOrder);

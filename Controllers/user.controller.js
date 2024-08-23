@@ -23,6 +23,15 @@ const getUsers = async (req, res) => {
 
     }
 }
+const getUsersById = async (req, res) => {
+    try {
+        const user = await userService.getUsersById(req.user.id);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json("Internal Server Error");
+
+    }
+}
 
 const createUser = async (req, res) => {
     try {
@@ -39,7 +48,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        await userService.updateUser(req.params.id, urlToUser(req));
+        await userService.updateUser(req.user.id, urlToUser(req));
         res.status(200).json({
             message: `user with id ${req.params.id} was updated succesfully`,
             user: urlToUser(req)
@@ -52,7 +61,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        await userService.deleteUser(req.params.id)
+        await userService.deleteUser(req.user.id)
         res.status(200).json(`Deleted user with id ${req.params.id}`);
     } catch (e) {
         res.status(200).json(`Could not delete user with id ${req.params.id}`);
@@ -84,5 +93,6 @@ module.exports = {
     updateUser,
     deleteUser,
     filterUsers,
+    getUsersById,
     errorNotFound
 };

@@ -10,7 +10,7 @@ const getOrders = async (req, res) => {
 }
 const getOrdersByUserID = async (req, res) => {
     try {
-        const orderList = await orderService.getOrdersByUserId(req.params.id);
+        const orderList = await orderService.getOrdersByUserId(req.user.id);
         res.status(200).json(orderList);
     } catch (err) {
         res.status(500).json("Internal Server Error");
@@ -26,11 +26,12 @@ const getOrderByID = async (req, res) => {
 }
 
 const createOrder = async (req, res) => {
-    const {userId, books} = req.body;
+    const {books} = req.body;
+    const user=req.user;
     try {
         const {finalBookList, totalPrice} = await bookService.getOrderedBooksByID(books)
         const order = {
-            userId: userId,
+            userId: user.id,
             books: finalBookList,
             totalPrice: totalPrice,
             date: Date.now(),
@@ -45,12 +46,12 @@ const createOrder = async (req, res) => {
 
 const updateOrder = async (req, res) => {
     try {
-        const {userId, books, date} = req.body;
-
+        const {books, date} = req.body;
+        const user=req.user;
         const {finalBookList, totalPrice} = await bookService.getOrderedBooksByID(books)
 
         await orderService.updateOrder(req.params.id, {
-            userId: userId,
+            userId: user.id,
             books: finalBookList,
             totalPrice: totalPrice,
             date: date,

@@ -6,6 +6,13 @@ const getUsers = async () => {
         console.error('Error retrieving Books:', err);
     }
 };
+const getUsersById = async (id) => {
+    try {
+        return await User.findById(id);
+    } catch (err) {
+        console.error('Error retrieving Books:', err);
+    }
+};
 const getUserByUsername = async (filter = {}) => {
     try {
         console.log(filter);
@@ -58,4 +65,4 @@ const getUserByFilters=async(filters,sortBy,sortOrder,limit) =>
 
     }
 }
-module.exports = {getUsers, getUserByUsername, createUser, updateUser, deleteUser,getUserByFilters,CheckCredentials};
+module.exports = {getUsers, getUserByUsername, createUser, updateUser, deleteUser,getUserByFilters,CheckCredentials,getUsersById};

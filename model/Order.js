@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bookItemSchema = new mongoose.Schema({
-    book: {type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true}, // Reference to the Book model
+    book_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true}, // Reference to the Book model
     quantity: {type: Number, required: true},  // Quantity of each book in the order
     price: {type: Number, required: true},
     name: {type: String, required: true}

@@ -21,6 +21,17 @@ const getBooksByName = async (req, res) => {
     }
 }
 
+const getMultipleBooksById=async (req, res) => {
+    try{
+        const bookList=await bookService.getMultipleBooksById(req.body.order);
+        res.status(200).json(bookList);
+
+    }
+    catch(err){
+        res.status(500).json("Internal Server Error");
+    }
+}
+
 const getBooks = async (req, res) => {
     try {
         const bookList = await bookService.getBooks();
@@ -44,6 +55,7 @@ const createBook = async (req, res) => {
 const updateBook = async (req, res) => {
     try {
         await bookService.updateBook(req.params.id, urlToBook(req));
+        //await orderService.updateOrder()
         res.status(200).json({
             message: `Book with id ${req.params.id} was updated successfully`, book: urlToBook(req)
         });
@@ -104,5 +116,6 @@ module.exports = {
     deleteBook,
     filterBooks,
     updateQuantities,
+    getMultipleBooksById,
     errorNotFound
 };

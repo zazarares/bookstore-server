@@ -27,9 +27,7 @@ const verifyAdminToken = (req, res, next) => {
 
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
         if (err) return res.sendStatus(403); // Invalid token
-        if(req.params.id!==user.id) return res.sendStatus(403);
-        if(req.params.isAdmin!==user.isAdmin) return res.sendStatus(403);
-        if(req.params.isAdmin!==true) return res.sendStatus(403);
+        if(user.isAdmin!==true) return res.sendStatus(403);
 
         req.user = user; // Add user info to request
         next();
