@@ -3,14 +3,14 @@ const getUsers = async () => {
     try {
         return await User.find();
     } catch (err) {
-        console.error('Error retrieving Books:', err);
+        console.error('Error retrieving Users:', err);
     }
 };
 const getUsersById = async (id) => {
     try {
         return await User.findById(id);
     } catch (err) {
-        console.error('Error retrieving Books:', err);
+        console.error('Error retrieving User:', err);
     }
 };
 const getUserByUsername = async (filter = {}) => {
@@ -18,27 +18,30 @@ const getUserByUsername = async (filter = {}) => {
         console.log(filter);
         return await User.find(filter);
     } catch (err) {
-        console.error('Error retrieving Books:', err);
+        console.error('Error retrieving Users:', err);
     }
 };
 const CheckCredentials = async (filter = {}) => {
     try {
-        const user=await User.find(filter);
-        if(user.length===1)
+        const user = await User.find(filter);
+        if (user.length === 1)
             return user[0];
         return null;
     } catch (err) {
-        console.error('Error retrieving Books:', err);
+        console.error('Invalid Credentials:', err);
         return false;
     }
 };
 const createUser = async (user) => {
     try {
-        const savedUser=new User(user);
-        return savedUser.save().then((r)=>{console.log(r);return r});
+        const savedUser = new User(user);
+        return savedUser.save().then((r) => {
+            console.log(r);
+            return r
+        });
 
     } catch (err) {
-        console.error('Error retrieving Users:', err);
+        console.error('Error creating User:', err);
     }
 }
 const updateUser = async (id, user) => {
@@ -56,13 +59,20 @@ const deleteUser = async (id) => {
         console.log("Error")
     }
 }
-const getUserByFilters=async(filters,sortBy,sortOrder,limit) =>
-{
-    try{
-        return await User.find(filters).sort({ [sortBy]: sortOrder }).limit(limit);
-    }
-    catch (e) {
+const getUserByFilters = async (filters, sortBy, sortOrder, limit) => {
+    try {
+        return await User.find(filters).sort({[sortBy]: sortOrder}).limit(limit);
+    } catch (e) {
 
     }
 }
-module.exports = {getUsers, getUserByUsername, createUser, updateUser, deleteUser,getUserByFilters,CheckCredentials,getUsersById};
+module.exports = {
+    getUsers,
+    getUserByUsername,
+    createUser,
+    updateUser,
+    deleteUser,
+    getUserByFilters,
+    CheckCredentials,
+    getUsersById
+};

@@ -5,7 +5,7 @@ function urlToUser(req)
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
-        isAdmin: req.body.isAdmin,
+        isAdmin: req.user ? req.user.isAdmin : false,
     }
 }
 function urlToBook(req)

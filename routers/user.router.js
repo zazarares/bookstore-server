@@ -9,11 +9,11 @@ router.use(setupCORS.setupCORS);
 
 router.get('/',verifyAdminToken, userController.getUsers);
 router.get('/id',authenticateToken, userController.getUsersById);
-
 router.get('/filter',verifyAdminToken,userController.filterUsers);
-router.post('/login/',CheckCredentials);
+router.post('/login',CheckCredentials);
 router.get('/:name',verifyAdminToken, userController.getUserByUsername);
 router.post('/', userController.createUser);
+router.post('/admin',verifyAdminToken, userController.createUser);
 router.put('/',authenticateToken, userController.updateUser);
 router.delete('/',authenticateToken, userController.deleteUser);
 

@@ -21,12 +21,12 @@ const generateToken=(user)=>
     });
 }
 const verifyAdminToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1]; // Expect "Bearer token"
+    const token = req.header('Authorization')?.split(' ')[1];
 
-    if (token == null) return res.sendStatus(401); // No token provided
+    if (token == null) return res.sendStatus(401);
 
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-        if (err) return res.sendStatus(403); // Invalid token
+        if (err) return res.sendStatus(403);
         if(user.isAdmin!==true) return res.sendStatus(403);
 
         req.user = user; // Add user info to request

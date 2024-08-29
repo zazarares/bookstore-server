@@ -1,11 +1,4 @@
 const Order = require("../model/Order");
-const getOrders = async () => {
-    try {
-        return await Order.find();
-    } catch (err) {
-        console.error('Error retrieving Orders:', err);
-    }
-};
 const createOrder = async (order) => {
     try {
         const SavedOrder=new Order(order);
@@ -16,7 +9,7 @@ const createOrder = async (order) => {
 }
 const updateOrder = async (id, order) => {
     try {
-        await Order.findByIdAndUpdate(id, order, {new: true}).exec();
+        return await Order.findByIdAndUpdate(id, order, {new: true}).exec();
     } catch (err) {
         console.log("Error")
     }
@@ -28,9 +21,9 @@ const deleteOrder = async (id) => {
         console.log("Error")
     }
 }
-const getOrdersByUserId = async (id) => {
+const getOrders = async (filter) => {
     try {
-        return await Order.find({userId:id});
+        return await Order.find(filter);
     } catch (err) {
         console.log("Error")
     }
@@ -42,4 +35,4 @@ const getOrderById = async (id) => {
         console.log("Error")
     }
 }
-module.exports = {getOrders, createOrder, updateOrder, deleteOrder,getOrdersByUserId,getOrderById};
+module.exports = {getOrders, createOrder, updateOrder, deleteOrder,getOrderById};

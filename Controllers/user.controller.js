@@ -70,7 +70,7 @@ const deleteUser = async (req, res) => {
 }
 const filterUsers = async (req, res) => {
     {
-        const {filters, sortBy, sortOrder, limit, ok} = createFilter.createFilter(req, "user");
+        const {filters, sortBy, sortOrder, limit, ok} = createFilter.createFilter(req.query, "user");
         if (!ok) {
             res.status(500).json("invalid parameters");
             return;

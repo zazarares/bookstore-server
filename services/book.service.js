@@ -1,18 +1,4 @@
 const Book = require("../model/Book");
-const getBooks = async () => {
-    try {
-        return await Book.find();
-    } catch (err) {
-        console.error('Error retrieving Books:', err);
-    }
-};
-const getBooksByName = async (filter = {}) => {
-    try {
-        return await Book.find(filter);
-    } catch (err) {
-        console.error('Error retrieving Books:', err);
-    }
-};
 const getMultipleBooksById = async (idList) => {
     try {
         return await Book.find({"_id": {$in: idList}}).exec();
@@ -73,10 +59,10 @@ const getFilters = async (filter) => {
                 {
                     $group: {
                         _id: '$genre',
-                        count: {$sum: 1} // this means that the count will increment by 1
+                        count: {$sum: 1}
                     }
                 },
-                {$sort: {_id: 1}} // Sort alphabetically by author
+                {$sort: {_id: 1}}
             ])
         }
     } catch (e) {
@@ -90,7 +76,7 @@ const createIDList = (books) => {
     }
     return bookIDs;
 }
-const addBookDetails = (bookList,orderedBooks) => {
+const calculateTotalPrice = (bookList,orderedBooks) => {
     const finalBookList = [];
     let totalPrice=0;
     for (let book of bookList) {
@@ -102,9 +88,7 @@ const addBookDetails = (bookList,orderedBooks) => {
 
             finalBookList.push({
                 book_id: currBook._id,
-                price: currBook.price,
                 quantity: matchedBook.quantity,
-                name: currBook.name,
             });
         }
     }
@@ -115,33 +99,47 @@ const getOrderedBooksByID = async (books) => {
 
         let bookIDs = createIDList(books);
         const bookList = await getMultipleBooksById(bookIDs);
-        return addBookDetails(bookList,books)
+        return calculateTotalPrice(bookList,books)
 
     } catch (error) {
 
     }
 };
+const checkQuantities=async(books)=> {
+    for (const book of books) {
+        const existingBook = await Book.findById(book.book_id);
+
+        if (!existingBook) {
+            throw new Error(`Book with ID ${book.book_id} not found`);
+        }
+
+        const newQuantity = existingBook.quantity - book.quantity;
+        if (newQuantity < 0) {
+            throw new Error(`Book with ID ${book.book_id} would have a negative quantity`);
+        }
+    }
+}
 const updateQuantities = async (books) => {
     try {
-        // Prepare an array of update operations
-        const operations = books.map(book => ({
-            updateOne: {
-                filter: {_id: book.book_id},  // Filter to match the book
-                update: {$inc: {quantity: -book.quantity}},  // Decrease the quantity
-            }
-        }));
-
-        return await Book.bulkWrite(operations);  // Optional: Return the result of the bulkWrite operation
+        const operations = [];
+        for (const book of books) {
+            operations.push({
+                updateOne: {
+                    filter: {_id: book.book_id},
+                    update: {$inc: {quantity: -book.quantity}},
+                }
+            });
+        }
+        return await Book.bulkWrite(operations);
     } catch (error) {
         console.error('Error updating book quantities:', error);
-        throw error;  // Optional: Propagate the error if needed
+        throw error;
     }
 };
+
 
 
 module.exports = {
-    getBooks,
-    getBooksByName,
     createBook,
     updateBook,
     deleteBook,
@@ -149,5 +147,6 @@ module.exports = {
     getFilters,
     updateQuantities,
     getOrderedBooksByID,
-    getMultipleBooksById
+    getMultipleBooksById,
+    checkQuantities
 };

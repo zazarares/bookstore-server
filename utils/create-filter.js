@@ -1,65 +1,56 @@
-const {validateQuery} = require("./query-validator");
 
-function createFilter(req, type,menu) {
+function createFilter(query) {
     const filters = {};
     let sortOrder = "asc";
     let sortBy = "name";
     let limit = 10;
     let page = 1;
-    for (let key in req.query) {
-        if (req.query.hasOwnProperty(key)) {
-            if (!validateQuery(key, req.query[key], type))
-                return {filters, sortBy, sortOrder, limit, ok: false};
+    for (let key in query) {
             if (key === "sortBy") {
-                sortBy = req.query[key];
+                sortBy = query[key];
                 continue;
             }
             if (key === "minPrice" || key === "maxPrice") {
-                filters["price"] = {$gte: parseInt(req.query["minPrice"]), $lte: parseInt(req.query["maxPrice"])};
+                filters["price"] = {$gte: parseInt(query["minPrice"]), $lte: parseInt(query["maxPrice"])};
                 continue;
             }
             if (key === "minYear" || key === "maxYear") {
-                filters["year"] = {$gte: parseInt(req.query["minYear"]), $lte: parseInt(req.query["maxYear"])};
+                filters["year"] = {$gte: parseInt(query["minYear"]), $lte: parseInt(query["maxYear"])};
                 continue;
             }
             if (key === "sortOrder") {
-                sortOrder = req.query[key];
+                sortOrder = query[key];
                 continue;
             }
             if (key === "limit") {
-                limit = parseInt(req.query[key]);
+                limit = parseInt(query[key]);
                 continue;
             }
             if (key === "page") {
-                page = parseInt(req.query[key]);
+                page = parseInt(query[key]);
                 continue;
             }
             if (key === "name") {
-                filters[key] = {"$regex": req.query[key], "$options": "i"};
+                filters[key] = {"$regex": query[key], "$options": "i"};
                 continue;
             }
             if (key === "quantity") {
-                filters[key] = {$gte: req.query[key]};
+                filters[key] = {$gte: query[key]};
                 continue;
             }
-            if(menu)
-            {
-                if(key==="genre")
-                {
-                    filters[key] = {$in: req.query[key]};
-                    continue;
-                }
-                if(key==="author"){
-                    filters[key] = {$in: req.query[key]};
-                    continue;
-                }
+            if (key === "genre") {
+                filters[key] = {$in: query[key]};
+                continue;
             }
-            filters[key] = req.query[key];
-
+            if (key === "author") {
+                filters[key] = {$in: query[key]};
+                continue;
+            }
+            if (key === "_id") {
+                filters[key] = query[key];
+            }
 
         }
-    }
-    console.log(filters, limit, page);
     return {filters, sortBy, sortOrder, limit, page, ok: true};
 }
 
